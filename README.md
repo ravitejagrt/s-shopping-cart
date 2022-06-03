@@ -4,20 +4,16 @@
 
 As a Customer I want to add products to my cart to checkout and purchase them in the WeWork website.
 
-### POST/shoppingcart
-This endpoint will create a shopping cart for the user in their account
-
-### POST/shoppingcart/{cartId}/item
+### POST/item
 This endpoint adds the item to the cart for checkout 
 
-### POST/shoppingcart/{cartId}/item/{itemId}
-This endpoint updates the item that is already in the cart 
-
+### POST/item/{itemId}
+This endpoint updates the item that is already in the cart
 
 ### Running on Studio <a name="runonstudio"/>
 Once you have imported Anypoint project into Anypoint Studio you need to follow these steps to run it:
 
-+ Locate the properties file `config-<env>.properties`, in src/main/app/resources/properties
++ Locate the properties file `config-<env>.yaml`, in src/main/app/resources/properties
 + Complete all the properties required as per the examples in the section [Properties to be configured](#propertiestobeconfigured)
 + Once that is done, right click on you Anypoint Template project folder 
 + Hover you mouse over `"Run as"`
