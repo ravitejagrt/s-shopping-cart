@@ -4,5 +4,5 @@ http:
   basepath: "/api"
   
 api:
-  id: "17877043"
+  id: ""
   flowName: "s-shoppping-cart-main"

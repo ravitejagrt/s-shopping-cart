@@ -122,30 +122,9 @@ output application/json
         </error-handler>
     </flow>
 	<flow name="post:\shoppingcart\(cartId)\item:application\json:s-ww-shoppingcart-config" doc:id="4f6a9aa2-8d95-44c2-bbec-caeb5c9dbb20" >
-		<logger level="INFO" doc:name="Logger" doc:id="5daddd41-2a79-421e-b294-a270bdd308e7" />
-		<ee:transform doc:name="Transform Message" doc:id="8bd4e6d0-c710-4494-a1fc-fe0207a7d972" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	"message": "Item added to cart"
-}]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
+		<flow-ref doc:name="add-items-to-cart-flow" doc:id="a2d91404-92d3-43be-addc-b1373e366275" name="add-items-to-cart-flow"/>
 	</flow>
 	<flow name="put:\shoppingcart\(cartId)\item\(itemId):application\json:s-ww-shoppingcart-config" doc:id="9e7d7d04-fc1b-4d34-81e3-5be0ab4e453f" >
-		<logger level="INFO" doc:name="Logger" doc:id="54b3a414-2a78-495d-a194-89e9a0084816" />
-		<ee:transform doc:name="Transform Message" doc:id="b862379a-ce5d-4c3f-8a51-36e1d975f065" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-  "message": "Item updated in cart"
-}]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-	
-</flow>
+		<flow-ref doc:name="update-item-in-cart-flow" doc:id="1e33bd41-f76b-46eb-9669-22e9ca87d215" name="update-item-in-cart-flow"/>
+	</flow>
 </mule>
