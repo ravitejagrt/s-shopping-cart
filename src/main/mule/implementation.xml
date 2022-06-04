@@ -7,16 +7,18 @@
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 	<sub-flow name="add-items-to-cart-flow" doc:id="f93626bc-3536-4eb2-89ce-78e141b90bb8" >
-		<logger level="INFO" doc:name="Logger" doc:id="61e44c99-f4d9-4091-ae49-fc947369f896" />
-		<ee:transform doc:name="Transform Message" doc:id="c20ff9c2-7a63-4af7-9ade-da742d6e0526" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/java
----
-payload map ((value, index) -> value)]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-<!-- [STUDIO:"Insert"]		<db:insert doc:name="Insert" doc:id="133c2179-1ba3-4a0d-aa53-a8ccd33e397a" /> [STUDIO] -->
+		<logger level="INFO" doc:name="Before Request Logger" doc:id="61e44c99-f4d9-4091-ae49-fc947369f896" message="Before Request"/>
+		<db:insert doc:name="Insert" doc:id="133c2179-1ba3-4a0d-aa53-a8ccd33e397a" config-ref="Database_Config">
+			<db:sql ><![CDATA[INSERT INTO shoppingcart ( product_id, variant_id, quantity, shipping, deliveryMethod) 
+VALUES ( :productId, :variantId, :quantity, :shipping, :deliveryMethod)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	productId: payload.item.productId,
+	variantId: payload.item.variantId,
+	quantity: payload.quantity,
+	shipping: payload.shipping,
+	deliveryMethod: payload.location.deliveryMethod
+}]]]></db:input-parameters>
+		</db:insert>
 		<ee:transform doc:name="Transform Message" doc:id="5ffff18d-6ebe-46af-869d-2d98814f8a4d" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
@@ -27,18 +29,20 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+		<logger level="INFO" doc:name="Exit logger" doc:id="7a45ea26-082e-45d3-8f6c-18a1987f81f4" message="Exit logger"/>
 	</sub-flow>
 	<sub-flow name="update-item-in-cart-flow" doc:id="a3faf513-0beb-46d8-ae99-405d3f9339a7" >
-		<logger level="INFO" doc:name="Logger" doc:id="0a5a9cd9-b8c4-4780-bc03-2a0daec39675" />
-		<ee:transform doc:name="Transform Message" doc:id="a7f65177-3676-47c7-ba0a-046650684da4" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/java
----
-payload]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-<!-- [STUDIO:"Update"]		<db:update doc:name="Update" doc:id="dd1cb3cf-9f17-414e-bf2e-27a3004f0405" /> [STUDIO] -->
+		<logger level="INFO" doc:name="Before Request Logger" doc:id="0a5a9cd9-b8c4-4780-bc03-2a0daec39675" message="Before Request"/>
+		<db:update doc:name="Update" doc:id="dd1cb3cf-9f17-414e-bf2e-27a3004f0405" config-ref="Database_Config">
+			<db:sql ><![CDATA[UPDATE shoppingcart quantity = :quantity, shipping = :shipping, delivery_method = :deliveryMethod 
+WHERE item_id = :itemId]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	itemId: vars.itemId,
+	quantity: payload.quantity,
+	shipping: payload.shipping,
+	deliveryMethod: payload.location.deliveryMethod
+}]]]></db:input-parameters>
+		</db:update>
 		<ee:transform doc:name="Transform Message" doc:id="f30ff45f-10e7-445f-9c22-97890aebdd8a" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
@@ -49,5 +53,6 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+		<logger level="INFO" doc:name="Exit logger" doc:id="e8345114-107b-40f3-8ac2-74b8cbffa13c" message="Exit logger"/>
 	</sub-flow>
 </mule>

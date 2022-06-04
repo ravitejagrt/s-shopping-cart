@@ -6,3 +6,8 @@ http:
 api:
   id: ""
   flowName: "s-shoppping-cart-main"
+  
+db:
+  host: ""
+  port: ""
+  databasename: ""
