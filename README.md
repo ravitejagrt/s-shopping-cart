@@ -18,6 +18,7 @@ Once you have imported Anypoint project into Anypoint Studio you need to follow 
 + Once that is done, right click on you Anypoint Template project folder 
 + Hover you mouse over `"Run as"`
 + Click on  `"Mule Application"`
++ Comment API Auto discovery global config to run the application locally in Anypoint Studio
 
 ## Properties to be configured (With examples) <a name="propertiestobeconfigured"/>
 In order to use this Mule Anypoint Project you need to configure properties (Credentials, configurations, etc.) either in properties file or runtime configuration or in CloudHub as Environment Variables.
