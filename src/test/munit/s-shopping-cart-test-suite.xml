@@ -99,6 +99,9 @@ output application/json
 		<munit:execution >
 			<flow-ref doc:name="Flow-ref to s-shoppping-cart-main" doc:id="819d13cd-a0be-40d6-b0a4-88685f84d95d" name="s-shoppping-cart-main"/>
 		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="5dc9c99e-8262-4091-8322-ada0b9c8bc3e" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
 	</munit:test>
 	<munit:test name="s-shopping-cart-test-suite-s-shoppping-cart-api-consoleTest" doc:id="f234351f-ec2a-4542-853e-4a37d105c410" description="Test">
 		<munit:behavior >
@@ -111,6 +114,9 @@ output application/json
 		<munit:execution >
 			<flow-ref doc:name="Flow-ref to s-shoppping-cart-api-console" doc:id="2980cdda-3aaf-48a1-91cc-cfa40af74108" name="s-shoppping-cart-api-console"/>
 		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="50453660-4a29-4a24-bb02-061f1d028e95" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
 	</munit:test>
 	<munit:test name="s-shopping-cart-test-suite-s-shoppping-cart-api-consoleTest1" doc:id="4cbdf306-5682-4876-8b93-1727e02b10e2" description="Test">
 		<munit:behavior >

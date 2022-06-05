@@ -9,5 +9,5 @@ api:
   
 db:
   host: ""
-  port: ""
+  port: "3306"
   databasename: ""
