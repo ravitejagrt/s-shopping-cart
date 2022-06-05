@@ -7,7 +7,7 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
     </http:listener-config>
     <configuration-properties doc:name="Configuration properties" doc:id="27c658e6-2fcb-416c-9f46-91c74f86c6af" file="properties\config-${mule.env}.yaml" />
     <secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="945e8439-256c-42db-8dce-2e4b114e5287" file="properties\secure-${mule.env}.yaml" key="${secret.key}" />
-    <!-- 	<api-gateway:autodiscovery apiId="${api.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="5ea7ca29-2a82-4522-b161-262d484bd5b0" flowRef="${api.flowName}" /> -->
+    	<api-gateway:autodiscovery apiId="${api.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="5ea7ca29-2a82-4522-b161-262d484bd5b0" flowRef="${api.flowName}" />
     <db:config name="Database_Config" doc:name="Database Config" doc:id="32410e12-60b1-4b02-aa4c-8bd9dd5d5809" >
 		<db:my-sql-connection host="${db.host}" port="${db.port}" user="${secure::db.user}" password="${secure::db.password}" database="${db.databasename}" />
 	</db:config>
