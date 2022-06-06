@@ -12,11 +12,11 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 			<db:sql ><![CDATA[INSERT INTO shoppingcart ( product_id, variant_id, quantity, shipping, deliveryMethod) 
 VALUES ( :productId, :variantId, :quantity, :shipping, :deliveryMethod)]]></db:sql>
 			<db:input-parameters ><![CDATA[#[{
-	productId: payload.item.productId,
-	variantId: payload.item.variantId,
-	quantity: payload.quantity,
-	shipping: payload.shipping,
-	deliveryMethod: payload.location.deliveryMethod
+	productId: payload[0].item.productId,
+	variantId: payload[0].item.variantId,
+	quantity: payload[0].quantity,
+	shipping: payload[0].shipping,
+	deliveryMethod: payload[0].location.deliveryMethod
 }]]]></db:input-parameters>
 		</db:insert> [STUDIO] -->
 		<ee:transform doc:name="Transform Message" doc:id="5ffff18d-6ebe-46af-869d-2d98814f8a4d" >
