@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<munit:config name="s-shopping-cart-test-suite.xml" />
+	<munit:test name="s-shopping-cart-test-suite-put:\items\(itemId):application\json:s-ww-shoppingcart-configTest" doc:id="e5564f8e-adcb-4023-8f92-94e4a8f9734f" description="Test">
+		<munit:enable-flow-sources >
+			<munit:enable-flow-source value="update-item-in-cart-flow" />
+			<munit:enable-flow-source value="put:\items\(itemId):application\json:s-ww-shoppingcart-config" />
+		</munit:enable-flow-sources>
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="c0271588-a7fa-4715-8374-694af14b983a" processor="db:update">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Database_Config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<set-variable value="123" doc:name="Set itemId" doc:id="3b9c8f6f-1031-475c-9538-5a41bb2aa6d6" variableName="itemId"/>
+			<ee:transform doc:name="Transform Message" doc:id="3603b4c1-0669-4a4b-971d-3538774f8086" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{    
+  "item": {
+    "productId": "eb8c8ca7-3c42-4489-a820-3aa138430b75",
+    "variantId": "88668866-2c6d-4fa6-9e17-4b2c42e0f051"
+  },
+  "quantity": 2,
+  "location": {
+    "locationId": "1c9a20dc-c585-42fd-ac1a-1216085b76d2",
+    "locationType": "STORE",
+    "deliveryMethod": "PICKUP"
+  }
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<flow-ref doc:name="Flow-ref to put:\items\(itemId):application\json:s-ww-shoppingcart-config" doc:id="eef17738-1ffd-4134-ac92-dd6add49032b" name="put:\items\(itemId):application\json:s-ww-shoppingcart-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="b1aae805-01c9-4687-a643-6f6e6175e530" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="s-shopping-cart-test-suite-post:\items:application\json:s-ww-shoppingcart-configTest" doc:id="b9228fae-8193-4480-aff2-a56583faf229" description="Test">
+		<munit:enable-flow-sources >
+			<munit:enable-flow-source value="post:\items:application\json:s-ww-shoppingcart-config" />
+			<munit:enable-flow-source value="add-items-to-cart-flow" />
+		</munit:enable-flow-sources>
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="570c3169-cc63-44dc-ac6a-ec237ba04d02" processor="db:insert">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Database_Config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<ee:transform doc:name="Transform Message" doc:id="4d4df0ca-7ee6-4e2e-b061-61a15b57aa98" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "item": {
+      "productId": "eb8c8ca7-3c42-4489-a820-3aa138430b75",
+      "variantId": "88668866-2c6d-4fa6-9e17-4b2c42e0f051"
+    },
+    "quantity": 2,
+    "location": {
+      "locationId": "1c9a20dc-c585-42fd-ac1a-1216085b76d2",
+      "locationType": "WAREHOUSE",
+      "deliveryMethod": "SHIPMENT"
+    },
+    "tax": 5.25,
+    "shipping": 5
+  }]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<flow-ref doc:name="Flow-ref to post:\items:application\json:s-ww-shoppingcart-config" doc:id="bf4b0a73-2b82-4ebe-bcf4-996a7f6b081a" name="post:\items:application\json:s-ww-shoppingcart-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="4080e002-cdf9-4a10-b907-7653ca566a2d" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="s-shopping-cart-test-suite-s-shoppping-cart-mainTest" doc:id="5ca798e0-0e22-44e3-ac87-aec31bd998dd" description="Test">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="bdcc92e6-bac1-4f49-969f-16b7fd9584d0" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="s-ww-shoppingcart-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to s-shoppping-cart-main" doc:id="819d13cd-a0be-40d6-b0a4-88685f84d95d" name="s-shoppping-cart-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="5dc9c99e-8262-4091-8322-ada0b9c8bc3e" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="s-shopping-cart-test-suite-s-shoppping-cart-api-consoleTest" doc:id="f234351f-ec2a-4542-853e-4a37d105c410" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="12236567-dcb2-4046-a076-fc4ceade7a1e" processor="apikit:console">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute whereValue="s-ww-shoppingcart-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to s-shoppping-cart-api-console" doc:id="2980cdda-3aaf-48a1-91cc-cfa40af74108" name="s-shoppping-cart-api-console"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="50453660-4a29-4a24-bb02-061f1d028e95" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="s-shopping-cart-test-suite-s-shoppping-cart-api-consoleTest1" doc:id="4cbdf306-5682-4876-8b93-1727e02b10e2" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when APIKIT:NOT_FOUND" doc:id="9f92f1f2-6ded-4939-9de1-ef8e1bf134f1" processor="apikit:console" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="s-ww-shoppingcart-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_FOUND" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to s-shoppping-cart-api-console" doc:id="9f6190b9-deeb-434c-8673-9092ece30a74" name="s-shoppping-cart-api-console"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="0b152123-96e6-4259-bb5c-84a40f639289" actual="#[vars.httpStatus]" expected="#[404]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="s-shopping-cart-test-suite-s-shoppping-cart-mainTest1" doc:id="58ff7b2a-59b0-4fbe-8385-d6cb185e9c20" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when APIKIT:BAD_REQUEST" doc:id="d91b958b-2152-40da-9ad1-53968cd3fad5" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="s-ww-shoppingcart-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:BAD_REQUEST" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to s-shoppping-cart-main" doc:id="0e1c65a0-4fcc-4529-8434-24f5592a9baf" name="s-shoppping-cart-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="8ef8383d-b379-4a3a-950c-88c2bb91493c" actual="#[vars.httpStatus]" expected="#[400]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="s-shopping-cart-test-suite-s-shoppping-cart-mainTest2" doc:id="d76a21fd-e5cc-46c0-9db6-f9f93a5792ef" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when APIKIT:NOT_FOUND" doc:id="4b759918-997e-485a-b690-0e1992022dfa" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="s-ww-shoppingcart-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_FOUND" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to s-shoppping-cart-main" doc:id="c9d21dde-485c-40cd-8fdf-a3f95320c277" name="s-shoppping-cart-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="853bfa25-058a-47dd-9e62-9887ab878ca0" actual="#[vars.httpStatus]" expected="#[404]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="s-shopping-cart-test-suite-s-shoppping-cart-mainTest3" doc:id="0d3857c5-3072-400e-9883-7df7f7dd1171" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when APIKIT:METHOD_NOT_ALLOWED" doc:id="1ee649cb-1074-4a25-a382-bac92c9cdef9" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="s-ww-shoppingcart-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:METHOD_NOT_ALLOWED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to s-shoppping-cart-main" doc:id="f0130663-afe4-4edb-b11a-c89b8269f968" name="s-shoppping-cart-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="60f27267-2a41-4eb4-ac38-e988cbb74f3e" actual="#[vars.httpStatus]" expected="#[405]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="s-shopping-cart-test-suite-s-shoppping-cart-mainTest4" doc:id="2cd44f96-07c7-4f00-b1de-6b61c3756620" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when APIKIT:NOT_ACCEPTABLE" doc:id="a7db2e16-d03f-494c-9d6a-39d23b5cb5bf" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="s-ww-shoppingcart-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_ACCEPTABLE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to s-shoppping-cart-main" doc:id="a2895131-9de4-46e3-82f3-de0c45074744" name="s-shoppping-cart-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="5508d252-cf0a-4564-9059-43a5318650a7" actual="#[vars.httpStatus]" expected="#[406]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="s-shopping-cart-test-suite-s-shoppping-cart-mainTest5" doc:id="f535aba7-ca24-424a-a7b1-f4204f79592d" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when APIKIT:UNSUPPORTED_MEDIA_TYPE" doc:id="727ccba3-bd75-405b-b481-8083a589291b" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="s-ww-shoppingcart-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:UNSUPPORTED_MEDIA_TYPE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to s-shoppping-cart-main" doc:id="f65d8e94-9cd8-477e-8bfb-481452d69ebe" name="s-shoppping-cart-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="2e9977e0-2cb5-461f-9227-ec5c2dd5c3de" actual="#[vars.httpStatus]" expected="#[415]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="s-shopping-cart-test-suite-s-shoppping-cart-mainTest6" doc:id="dd7e2a48-0ccc-4703-8cb7-7b80f400f9f3" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when APIKIT:NOT_IMPLEMENTED" doc:id="be2a23b8-a988-4ff3-b01a-1e8c56694dfd" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="s-ww-shoppingcart-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_IMPLEMENTED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to s-shoppping-cart-main" doc:id="0d0301c8-dcea-43c0-be05-f6ce8afeeb04" name="s-shoppping-cart-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="53ab3d4a-5b85-4338-93f0-29ba5d38b120" actual="#[vars.httpStatus]" expected="#[501]" />
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

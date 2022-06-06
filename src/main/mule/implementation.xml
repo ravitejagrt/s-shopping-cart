@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<sub-flow name="add-items-to-cart-flow" doc:id="f93626bc-3536-4eb2-89ce-78e141b90bb8" >
+		<logger level="INFO" doc:name="Before Request Logger" doc:id="61e44c99-f4d9-4091-ae49-fc947369f896" message="Before Request"/>
+<!-- [STUDIO:"Insert"]		<db:insert doc:name="Insert" doc:id="133c2179-1ba3-4a0d-aa53-a8ccd33e397a" config-ref="Database_Config">
+			<db:sql ><![CDATA[INSERT INTO shoppingcart ( product_id, variant_id, quantity, shipping, deliveryMethod) 
+VALUES ( :productId, :variantId, :quantity, :shipping, :deliveryMethod)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	productId: payload[0].item.productId,
+	variantId: payload[0].item.variantId,
+	quantity: payload[0].quantity,
+	shipping: payload[0].shipping,
+	deliveryMethod: payload[0].location.deliveryMethod
+}]]]></db:input-parameters>
+		</db:insert> [STUDIO] -->
+		<ee:transform doc:name="Transform Message" doc:id="5ffff18d-6ebe-46af-869d-2d98814f8a4d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message": "Item added to cart"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Exit logger" doc:id="7a45ea26-082e-45d3-8f6c-18a1987f81f4" message="Exit logger"/>
+	</sub-flow>
+	<sub-flow name="update-item-in-cart-flow" doc:id="a3faf513-0beb-46d8-ae99-405d3f9339a7" >
+		<logger level="INFO" doc:name="Before Request Logger" doc:id="0a5a9cd9-b8c4-4780-bc03-2a0daec39675" message="Before Request"/>
+<!-- [STUDIO:"Update"]		<db:update doc:name="Update" doc:id="dd1cb3cf-9f17-414e-bf2e-27a3004f0405" config-ref="Database_Config">
+			<db:sql ><![CDATA[UPDATE shoppingcart quantity = :quantity, shipping = :shipping, delivery_method = :deliveryMethod 
+WHERE item_id = :itemId]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	itemId: vars.itemId,
+	quantity: payload.quantity,
+	shipping: payload.shipping,
+	deliveryMethod: payload.location.deliveryMethod
+}]]]></db:input-parameters>
+		</db:update> [STUDIO] -->
+		<ee:transform doc:name="Transform Message" doc:id="f30ff45f-10e7-445f-9c22-97890aebdd8a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "message": "Item updated in cart"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Exit logger" doc:id="e8345114-107b-40f3-8ac2-74b8cbffa13c" message="Exit logger"/>
+	</sub-flow>
+</mule>
